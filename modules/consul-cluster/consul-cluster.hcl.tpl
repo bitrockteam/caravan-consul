@@ -7,7 +7,7 @@ bootstrap = true
 {{ end }}
 retry_join = [
    %{ for n in setsubtract(keys("${cluster_nodes}"), [node_id]) ~}
-   "${cluster_nodes[n]}",
+   "${cluster_nodes[n]}:8301",
    %{ endfor ~}
 ]
 server = true
