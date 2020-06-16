@@ -8,6 +8,7 @@ resource "null_resource" "consul_cluster_node" {
       "${path.module}/consul-cluster.hcl.tpl",
       {
         cluster_nodes = var.cluster_nodes
+        node_id       = each.key
       }
     )}
     EOT
