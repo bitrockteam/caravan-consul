@@ -4,6 +4,8 @@ log_level = "INFO"
 node_name = "${node_id}"
 %{if "${node_id}" == "cluster-node-1" ~}
 bootstrap = true
+%{ else ~}
+bootstrap_expect = 3
 %{ endif ~}
 retry_join = [
    %{ for n in setsubtract(keys("${cluster_nodes}"), [node_id]) ~}
@@ -11,7 +13,6 @@ retry_join = [
    %{ endfor ~}
 ]
 server = true
-bootstrap_expect = 3
 telemetry = {
    statsite_address = "127.0.0.1:2180"
 }
