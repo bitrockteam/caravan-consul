@@ -17,3 +17,4 @@ telemetry = {
    statsite_address = "127.0.0.1:2180"
 }
 ui = true
+client_addr = "0.0.0.0"
