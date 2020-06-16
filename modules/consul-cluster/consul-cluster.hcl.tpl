@@ -11,7 +11,7 @@ retry_join = [
    %{ endfor ~}
 ]
 server = true
-bootstrap_expect = "3"
+bootstrap_expect = 3
 telemetry = {
    statsite_address = "127.0.0.1:2180"
 }
