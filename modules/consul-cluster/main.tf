@@ -54,9 +54,9 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
   triggers = {
     nodes = join(",", keys(null_resource.consul_cluster_node_deploy_config))
   }
-  depends_on = [
-    null_resource.consul_cluster_node_1_init,
-  ]
+  # depends_on = [
+  #   null_resource.consul_cluster_node_1_init,
+  # ]
 
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_cluster_init.sh"
@@ -70,3 +70,18 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
   }
 }
 
+resource "null_resource" "consul_cluster_acl_start" {
+  depends_on = [
+    null_resource.consul_cluster_not_node_1_init,
+  ]
+  provisioner "remote-exec" {
+    inline = "consul acl bootstrap"
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      timeout     = var.ssh_timeout
+      private_key = var.ssh_private_key
+      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]
+    }
+  }
+}
