@@ -1,4 +1,4 @@
-resource "null_resource" "consul_cluster_node" {
+resource "null_resource" "consul_cluster_node_deploy_config" {
   for_each = var.cluster_nodes
 
   provisioner "file" {
@@ -31,7 +31,12 @@ resource "null_resource" "consul_cluster_node" {
       host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
     }
   }
+}
 
+resource "null_resource" "consul_cluster_node_1_init" {
+  triggers = {
+    nodes = null_resource.consul_cluster_node_deploy_config[keys(var.cluster_nodes)[0]].id
+  }
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_cluster_init.sh"
     connection {
@@ -43,3 +48,25 @@ resource "null_resource" "consul_cluster_node" {
     }
   }
 }
+
+resource "null_resource" "consul_cluster_not_node_1_init" {
+  count = length(var.cluster_nodes) - 1 < 0 ? 0 : length(var.cluster_nodes) - 1
+  triggers = {
+    nodes = join(",", keys(null_resource.vault_cluster_node_config))
+  }
+  depends_on = [
+    null_resource.vault_cluster_node_1_init,
+  ]
+
+  provisioner "remote-exec" {
+    script = "${path.module}/scripts/consul_cluster_init.sh"
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      timeout     = var.ssh_timeout
+      private_key = var.ssh_private_key
+      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[count.index + 1]]
+    }
+  }
+}
+
