@@ -16,5 +16,10 @@ server = true
 telemetry = {
    statsite_address = "127.0.0.1:2180"
 }
+acl {
+   enabled = true
+   default_policy = "allow"
+   enable_token_persistence = true
+ }
 ui = true
 client_addr = "0.0.0.0"
