@@ -23,7 +23,7 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 
   provisioner "file" {
     source      = "${path.module}/acls/"
-    destination = "/tmp/acls/"
+    destination = "/tmp/"
 
     connection {
       type        = "ssh"
