@@ -21,8 +21,13 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
     }
   }
 
+  provisioner "file" {
+    source      = "${path.module}/acls/"
+    destination = "/tmp/acls/"
+  }
+
   provisioner "remote-exec" {
-    inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl"]
+    inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo mv /tmp/acls /etc/consul.d/acls/"]
     connection {
       type        = "ssh"
       user        = var.ssh_user
