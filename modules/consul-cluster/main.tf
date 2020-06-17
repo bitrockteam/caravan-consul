@@ -24,6 +24,14 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
   provisioner "file" {
     source      = "${path.module}/acls/"
     destination = "/tmp/acls/"
+
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = var.ssh_private_key
+      timeout     = var.ssh_timeout
+      host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+    }
   }
 
   provisioner "remote-exec" {
