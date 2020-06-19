@@ -88,7 +88,7 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
     null_resource.consul_cluster_not_node_1_init,
   ]
   provisioner "remote-exec" {
-    inline = ["consul acl bootstrap"]
+    script = "${path.module}/scripts/consul_acl_bootstrap.sh"
     connection {
       type        = "ssh"
       user        = var.ssh_user
