@@ -35,7 +35,7 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo mkdir /etc/consul.d/acls/; sudo mv /tmp/*.hcl /etc/consul.d/acls/"]
+    inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo cp /tmp/*.hcl /etc/consul.d/acls/ /home/centos; rm /tmp/*.hcl"]
     connection {
       type        = "ssh"
       user        = var.ssh_user
@@ -101,7 +101,7 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
 
 resource "local_file" "ssh-key" {
   depends_on = [
-    null_resource.consul_cluster_node_1_init
+    null_resource.consul_cluster_acl_bootstrap
   ]
   sensitive_content = var.ssh_private_key
   filename          = "${path.module}/.ssh-key"
@@ -111,7 +111,7 @@ resource "local_file" "ssh-key" {
 resource "null_resource" "copy_bootstrap_token" {
   depends_on = [
     local_file.ssh-key,
-    null_resource.consul_cluster_node_1_init
+    null_resource.consul_cluster_acl_bootstrap
   ]
   provisioner "local-exec" {
     command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/bootstrap_token' > .bootstrap_token"
@@ -123,6 +123,7 @@ resource "null_resource" "copy_bootstrap_token" {
 
 resource "null_resource" "consul_cluster_add_agent_token" {
   depends_on = [
+    null_resource.consul_cluster_acl_bootstrap,
     null_resource.consul_cluster_not_node_1_init,
   ]
   provisioner "remote-exec" {
