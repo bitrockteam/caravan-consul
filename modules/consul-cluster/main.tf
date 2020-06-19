@@ -122,12 +122,13 @@ resource "null_resource" "copy_bootstrap_token" {
   }
 }
 
-resource "null_resource" "consul_cluster_add_agent_token" {
+resource "null_resource" "consul_cluster_tokenize" {
   depends_on = [
+    null_resource.copy_bootstrap_token,
     null_resource.consul_cluster_acl_bootstrap,
   ]
   provisioner "remote-exec" {
-    script = "${path.module}/scripts/consul_token_agent.sh"
+    script = "${path.module}/scripts/consul_tokenize.sh"
     connection {
       type        = "ssh"
       user        = var.ssh_user
