@@ -131,10 +131,10 @@ resource "null_resource" "copy_bootstrap_token" {
     null_resource.consul_cluster_acl_bootstrap
   ]
   provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/bootstrap_token' > .bootstrap_token && rm /root/bootstrap_token"
+    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/bootstrap_token' > .bootstrap_token && sudo rm /root/bootstrap_token"
   }
   provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/ui_token' > .ui_token && rm /root/ui_token"
+    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/ui_token' > .ui_token && sudo rm /root/ui_token"
   }
   provisioner "local-exec" {
     command = "rm ${path.module}/.ssh-key"
