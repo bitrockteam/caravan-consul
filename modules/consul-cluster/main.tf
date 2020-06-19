@@ -85,9 +85,9 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
 }
 
 resource "null_resource" "consul_cluster_acl_bootstrap" {
-  depends_on = [
-    null_resource.consul_cluster_not_node_1_init,
-  ]
+  triggers = {
+    nodes = join(",", keys(null_resource.consul_cluster_not_node_1_init[0]))
+  }
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_acl_bootstrap.sh"
     connection {
@@ -137,4 +137,3 @@ resource "null_resource" "consul_cluster_add_agent_token" {
     }
   }
 }
-
