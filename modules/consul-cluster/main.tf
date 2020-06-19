@@ -1,5 +1,7 @@
 resource "null_resource" "consul_cluster_node_deploy_config" {
-  depends_on = [module.vault_cluster.vault_rendezvous]
+  triggers = {
+    nodes = join(",", keys(var.cluster_nodes))
+  }
 
   for_each = var.cluster_nodes
 
