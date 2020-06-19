@@ -67,9 +67,9 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
   triggers = {
     nodes = join(",", keys(null_resource.consul_cluster_node_deploy_config))
   }
-  # depends_on = [
-  #   null_resource.consul_cluster_node_1_init,
-  # ]
+  depends_on = [
+    null_resource.consul_cluster_node_1_init,
+  ]
 
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_cluster_init.sh"
