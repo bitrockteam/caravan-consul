@@ -1,4 +1,7 @@
 resource "null_resource" "consul_cluster_node_deploy_config" {
+  triggers = {
+    nodes = join(",", keys(var.cluster_nodes))
+  }
   for_each = var.cluster_nodes
 
   provisioner "file" {
@@ -47,9 +50,9 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 }
 
 resource "null_resource" "consul_cluster_node_1_init" {
-  depends_on = [
-    null_resource.consul_cluster_node_deploy_config,
-  ]
+  triggers = {
+    nodes = null_resource.consul_cluster_node_deploy_config[keys(var.cluster_nodes)[0]].id
+  }
   
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_cluster_init.sh"
@@ -66,7 +69,7 @@ resource "null_resource" "consul_cluster_node_1_init" {
 resource "null_resource" "consul_cluster_not_node_1_init" {
   count = length(var.cluster_nodes) - 1 < 0 ? 0 : length(var.cluster_nodes) - 1
   triggers = {
-    nodes = join(",", keys(null_resource.consul_cluster_node_1_init))
+    nodes = join(",", keys(null_resource.consul_cluster_node_deploy_config))
   }
 
   provisioner "remote-exec" {
