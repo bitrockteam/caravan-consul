@@ -66,7 +66,7 @@ resource "null_resource" "consul_cluster_node_1_init" {
 resource "null_resource" "consul_cluster_not_node_1_init" {
   count = length(var.cluster_nodes) - 1 < 0 ? 0 : length(var.cluster_nodes) - 1
   triggers = {
-    nodes = null_resource.consul_cluster_node_1_init[keys(var.cluster_nodes)[0]].id
+    nodes = null_resource.consul_cluster_node_1_init
   }
 
   provisioner "remote-exec" {
