@@ -47,9 +47,10 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 }
 
 resource "null_resource" "consul_cluster_node_1_init" {
-  triggers = {
-    nodes = null_resource.consul_cluster_node_deploy_config[keys(var.cluster_nodes)[0]].id
-  }
+  depends_on = [
+    null_resource.consul_cluster_node_deploy_config,
+  ]
+  
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_cluster_init.sh"
     connection {
@@ -64,12 +65,10 @@ resource "null_resource" "consul_cluster_node_1_init" {
 
 resource "null_resource" "consul_cluster_not_node_1_init" {
   count = length(var.cluster_nodes) - 1 < 0 ? 0 : length(var.cluster_nodes) - 1
-  triggers = {
-    nodes = join(",", keys(null_resource.consul_cluster_node_deploy_config))
-  }
-  # depends_on = [
-  #   null_resource.consul_cluster_node_1_init,
-  # ]
+
+  depends_on = [
+    null_resource.consul_cluster_node_1_init,
+  ]
 
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_cluster_init.sh"
@@ -84,9 +83,9 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
 }
 
 resource "null_resource" "consul_cluster_acl_bootstrap" {
-  triggers = {
-    nodes = null_resource.consul_cluster_node_deploy_config[keys(var.cluster_nodes)[0]].id
-  }
+  depends_on = [
+    null_resource.consul_cluster_not_node_1_init,
+  ]
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_acl_bootstrap.sh"
     connection {
@@ -101,8 +100,6 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
 
 resource "local_file" "ssh-key" {
   depends_on = [
-    null_resource.consul_cluster_node_1_init,
-    null_resource.consul_cluster_not_node_1_init,
     null_resource.consul_cluster_acl_bootstrap,
   ]
   sensitive_content = var.ssh_private_key
@@ -126,8 +123,6 @@ resource "null_resource" "copy_bootstrap_token" {
 resource "null_resource" "consul_cluster_add_agent_token" {
   depends_on = [
     null_resource.consul_cluster_acl_bootstrap,
-    null_resource.consul_cluster_node_1_init,
-    null_resource.consul_cluster_not_node_1_init,
   ]
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_token_agent.sh"
