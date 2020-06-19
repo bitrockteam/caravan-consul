@@ -85,6 +85,7 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
 
 resource "null_resource" "consul_cluster_acl_bootstrap" {
   depends_on = [
+    null_resource.consul_cluster_node_1_init,
     null_resource.consul_cluster_not_node_1_init,
   ]
   provisioner "remote-exec" {
@@ -101,7 +102,9 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
 
 resource "local_file" "ssh-key" {
   depends_on = [
-    null_resource.consul_cluster_acl_bootstrap
+    null_resource.consul_cluster_node_1_init,
+    null_resource.consul_cluster_not_node_1_init,
+    null_resource.consul_cluster_acl_bootstrap,
   ]
   sensitive_content = var.ssh_private_key
   filename          = "${path.module}/.ssh-key"
@@ -124,6 +127,7 @@ resource "null_resource" "copy_bootstrap_token" {
 resource "null_resource" "consul_cluster_add_agent_token" {
   depends_on = [
     null_resource.consul_cluster_acl_bootstrap,
+    null_resource.consul_cluster_node_1_init,
     null_resource.consul_cluster_not_node_1_init,
   ]
   provisioner "remote-exec" {
