@@ -100,25 +100,9 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
   }
 }
 
-resource "null_resource" "consul_cluster_tokenize" {
-  depends_on = [
-    null_resource.consul_cluster_acl_bootstrap,
-  ]
-  provisioner "remote-exec" {
-    script = "${path.module}/scripts/consul_tokenize.sh"
-    connection {
-      type        = "ssh"
-      user        = var.ssh_user
-      timeout     = var.ssh_timeout
-      private_key = var.ssh_private_key
-      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]
-    }
-  }
-}
-
 resource "local_file" "ssh-key" {
   depends_on = [
-    null_resource.consul_cluster_tokenize,
+    null_resource.consul_cluster_acl_bootstrap,
   ]
   sensitive_content = var.ssh_private_key
   filename          = "${path.module}/.ssh-key"
@@ -128,15 +112,28 @@ resource "local_file" "ssh-key" {
 resource "null_resource" "copy_bootstrap_token" {
   depends_on = [
     local_file.ssh-key,
-    null_resource.consul_cluster_tokenize
+    null_resource.consul_cluster_acl_bootstrap
   ]
   provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/bootstrap_token' > .bootstrap_token && sudo rm /root/bootstrap_token"
-  }
-  provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/ui_token' > .ui_token && sudo rm /root/ui_token"
+    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/bootstrap_token' > .bootstrap_token"
   }
   provisioner "local-exec" {
     command = "rm ${path.module}/.ssh-key"
+  }
+}
+
+resource "null_resource" "consul_cluster_add_agent_token" {
+  depends_on = [
+    null_resource.consul_cluster_acl_bootstrap,
+  ]
+  provisioner "remote-exec" {
+    script = "${path.module}/scripts/consul_token_agent.sh"
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      timeout     = var.ssh_timeout
+      private_key = var.ssh_private_key
+      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]
+    }
   }
 }
