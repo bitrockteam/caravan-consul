@@ -35,7 +35,7 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo cp /tmp/*.hcl /etc/consul.d/acls/ /home/centos; rm /tmp/*.hcl"]
+    inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo cp /tmp/*.hcl /home/centos; sudo chown -R centos: /home/centos/*; rm /tmp/*.hcl"]
     connection {
       type        = "ssh"
       user        = var.ssh_user
@@ -84,10 +84,9 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
 }
 
 resource "null_resource" "consul_cluster_acl_bootstrap" {
-  depends_on = [
-    null_resource.consul_cluster_node_1_init,
-    null_resource.consul_cluster_not_node_1_init,
-  ]
+  triggers = {
+    nodes = null_resource.consul_cluster_node_deploy_config[keys(var.cluster_nodes)[0]].id
+  }
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_acl_bootstrap.sh"
     connection {
