@@ -100,6 +100,22 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
   }
 }
 
+resource "null_resource" "consul_cluster_tokenize" {
+  depends_on = [
+    null_resource.consul_cluster_acl_bootstrap,
+  ]
+  provisioner "remote-exec" {
+    script = "${path.module}/scripts/consul_tokenize.sh"
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      timeout     = var.ssh_timeout
+      private_key = var.ssh_private_key
+      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]
+    }
+  }
+}
+
 resource "local_file" "ssh-key" {
   depends_on = [
     null_resource.consul_cluster_acl_bootstrap,
@@ -122,21 +138,5 @@ resource "null_resource" "copy_bootstrap_token" {
   }
   provisioner "local-exec" {
     command = "rm ${path.module}/.ssh-key"
-  }
-}
-
-resource "null_resource" "consul_cluster_tokenize" {
-  depends_on = [
-    null_resource.consul_cluster_acl_bootstrap,
-  ]
-  provisioner "remote-exec" {
-    script = "${path.module}/scripts/consul_tokenize.sh"
-    connection {
-      type        = "ssh"
-      user        = var.ssh_user
-      timeout     = var.ssh_timeout
-      private_key = var.ssh_private_key
-      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]
-    }
   }
 }
