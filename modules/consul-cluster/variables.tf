@@ -19,3 +19,13 @@ variable "ssh_timeout" {
   type    = string
   default = "15s"
 }
+variable "cluster_nodes_ids" {
+  type = list(string)
+}
+variable "vault_address" {
+  type = string
+}
+variable "vault_token_file" {
+  type = string
+  default = ".root_token"
+}

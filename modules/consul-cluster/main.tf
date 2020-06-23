@@ -1,6 +1,6 @@
 resource "null_resource" "consul_cluster_node_deploy_config" {
   triggers = {
-    nodes = join(",", keys(var.cluster_nodes))
+    ids = join("-", var.cluster_nodes_ids)
   }
 
   for_each = var.cluster_nodes
@@ -9,52 +9,52 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
     destination = "/tmp/consul.hcl"
     content = <<-EOT
     ${templatefile(
-      "${path.module}/consul-cluster.hcl.tpl",
-      {
-        cluster_nodes = var.cluster_nodes
-        node_id       = each.key
-      }
-    )}
+    "${path.module}/consul-cluster.hcl.tpl",
+    {
+      cluster_nodes = var.cluster_nodes
+      node_id       = each.key
+    }
+)}
     EOT
-    connection {
-      type        = "ssh"
-      user        = var.ssh_user
-      private_key = var.ssh_private_key
-      timeout     = var.ssh_timeout
-      host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-    }
-  }
+connection {
+  type        = "ssh"
+  user        = var.ssh_user
+  private_key = var.ssh_private_key
+  timeout     = var.ssh_timeout
+  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+}
+}
 
-  provisioner "file" {
-    source      = "${path.module}/acls/"
-    destination = "/tmp/"
+provisioner "file" {
+  source      = "${path.module}/acls/"
+  destination = "/tmp/"
 
-    connection {
-      type        = "ssh"
-      user        = var.ssh_user
-      private_key = var.ssh_private_key
-      timeout     = var.ssh_timeout
-      host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-    }
+  connection {
+    type        = "ssh"
+    user        = var.ssh_user
+    private_key = var.ssh_private_key
+    timeout     = var.ssh_timeout
+    host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
   }
+}
 
-  provisioner "remote-exec" {
-    inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo cp /tmp/*.hcl /home/centos; sudo chown -R centos: /home/centos/*; rm /tmp/*.hcl"]
-    connection {
-      type        = "ssh"
-      user        = var.ssh_user
-      timeout     = var.ssh_timeout
-      private_key = var.ssh_private_key
-      host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-    }
+provisioner "remote-exec" {
+  inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo cp /tmp/*.hcl /home/centos; sudo chown -R centos: /home/centos/*; rm /tmp/*.hcl"]
+  connection {
+    type        = "ssh"
+    user        = var.ssh_user
+    timeout     = var.ssh_timeout
+    private_key = var.ssh_private_key
+    host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
   }
+}
 }
 
 resource "null_resource" "consul_cluster_node_1_init" {
   triggers = {
-    nodes = null_resource.consul_cluster_node_deploy_config[keys(var.cluster_nodes)[0]].id
+    nodes = (length(null_resource.consul_cluster_node_deploy_config) > 0 ? null_resource.consul_cluster_node_deploy_config[keys(null_resource.consul_cluster_node_deploy_config)[0]].id : null)
   }
-  
+
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_cluster_init.sh"
     connection {
@@ -70,11 +70,13 @@ resource "null_resource" "consul_cluster_node_1_init" {
 resource "null_resource" "consul_cluster_not_node_1_init" {
   count = length(var.cluster_nodes) - 1 < 0 ? 0 : length(var.cluster_nodes) - 1
   triggers = {
-    nodes = join(",", keys(null_resource.consul_cluster_node_deploy_config))
+    nodes = length(keys(null_resource.consul_cluster_node_deploy_config)) > 0 ? join("-", [for k,v in null_resource.consul_cluster_node_deploy_config: v.id ] ) : ""
   }
 
   provisioner "remote-exec" {
-    script = "${path.module}/scripts/consul_cluster_init.sh"
+    inline = [
+      "CONSUL_INIT1=${null_resource.consul_cluster_node_1_init.id} VAULT_ADDRESS=${var.vault_address} VAULT_TOKEN_FILE=/root/.root_token ${path.module}/scripts/consul_cluster_init.sh"
+    ]
     connection {
       type        = "ssh"
       user        = var.ssh_user
@@ -87,7 +89,7 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
 
 resource "null_resource" "consul_cluster_acl_bootstrap" {
   triggers = {
-    nodes = join(",", keys(null_resource.consul_cluster_not_node_1_init[0]))
+    nodes = length(null_resource.consul_cluster_not_node_1_init) > 0 ? join("-",null_resource.consul_cluster_not_node_1_init[*].id) : ""
   }
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_acl_bootstrap.sh"
