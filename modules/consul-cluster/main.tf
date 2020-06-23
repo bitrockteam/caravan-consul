@@ -13,6 +13,7 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
     {
       cluster_nodes = var.cluster_nodes
       node_id       = each.key
+      leader        = keys(var.cluster_nodes)[0]
     }
 )}
     EOT
@@ -70,7 +71,7 @@ resource "null_resource" "consul_cluster_node_1_init" {
 resource "null_resource" "consul_cluster_not_node_1_init" {
   count = length(var.cluster_nodes) - 1 < 0 ? 0 : length(var.cluster_nodes) - 1
   triggers = {
-    nodes = length(keys(null_resource.consul_cluster_node_deploy_config)) > 0 ? join("-", [for k,v in null_resource.consul_cluster_node_deploy_config: v.id ] ) : ""
+    nodes = length(keys(null_resource.consul_cluster_node_deploy_config)) > 0 ? join("-", [for k, v in null_resource.consul_cluster_node_deploy_config : v.id]) : ""
   }
 
   provisioner "remote-exec" {
@@ -89,7 +90,7 @@ resource "null_resource" "consul_cluster_not_node_1_init" {
 
 resource "null_resource" "consul_cluster_acl_bootstrap" {
   triggers = {
-    nodes = length(null_resource.consul_cluster_not_node_1_init) > 0 ? join("-",null_resource.consul_cluster_not_node_1_init[*].id) : ""
+    nodes = length(null_resource.consul_cluster_not_node_1_init) > 0 ? join("-", null_resource.consul_cluster_not_node_1_init[*].id) : ""
   }
   provisioner "remote-exec" {
     script = "${path.module}/scripts/consul_acl_bootstrap.sh"

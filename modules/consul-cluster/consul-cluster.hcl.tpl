@@ -2,7 +2,7 @@ datacenter = "hcpoc"
 data_dir = "/var/lib/consul"
 log_level = "INFO"
 node_name = "${node_id}"
-%{if "${node_id}" == "cluster-node-1" ~}
+%{if "${node_id}" == "${leader}" ~}
 bootstrap = true
 %{ else ~}
 bootstrap_expect = 3
