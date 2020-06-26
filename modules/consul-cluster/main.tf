@@ -39,8 +39,8 @@ provisioner "file" {
 }
 
 provisioner "file" {
-  content     = "export VAULT_ADDRESS=${var.vault_address}\nexport VAULT_TOKEN_FILE=/root/.root_token\n"
-  destination = "vars"
+  content     = "echo VAULT_ADDR=${var.vault_address} VAULT_TOKEN=`cat /root/root_token`\n"
+  destination = "vault.vars"
 
   connection {
     type        = "ssh"
@@ -52,7 +52,7 @@ provisioner "file" {
 }
 
 provisioner "remote-exec" {
-  inline = ["sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo cp /tmp/*.hcl /home/centos; sudo chown -R centos: /home/centos/*; rm /tmp/*.hcl"]
+  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl; sudo cp /tmp/*.hcl /home/centos; sudo chown -R centos: /home/centos/*; rm /tmp/*.hcl"]
   connection {
     type        = "ssh"
     user        = var.ssh_user
