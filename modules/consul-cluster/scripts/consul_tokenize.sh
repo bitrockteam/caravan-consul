@@ -7,4 +7,4 @@ awk '/SecretID/{print $2}' | \
 sudo tee /root/ui_token
 export `sudo sh /root/vault.vars` && \
 vault kv put secret/consul/ui_token token="`sudo cat /root/ui_token`" && \
-rm /root/ui_token
+sudo rm /root/ui_token
