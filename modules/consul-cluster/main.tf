@@ -134,16 +134,3 @@ resource "null_resource" "consul_cluster_tokenize" {
     }
   }
 }
-
-resource "null_resource" "copy_ui_token" {
-  depends_on = [
-    local_file.ssh-key,
-    null_resource.consul_cluster_tokenize
-  ]
-  provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/ui_token' > .ui_token"
-  }
-  provisioner "local-exec" {
-    command = "rm ${path.module}/.ssh-key"
-  }
-}
