@@ -118,27 +118,6 @@ resource "null_resource" "copy_bootstrap_token" {
   }
 }
 
-provider "consul" {
-  address    = "${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]}:8500"
-}
-
-resource "consul_acl_policy" "cluster_node_agent_policy" {
-  depends_on = [
-    null_resource.copy_bootstrap_token,
-    null_resource.consul_cluster_acl_bootstrap,
-  ]
-  name        = "cluster-node-agent-policy"
-  rules       = file("${path.module}/acls/cluster-node-agent.hcl")
-}
-
-resource "consul_acl_token_policy_attachment" "cluster_node_agent_token" {
-  depends_on = [
-    consul_acl_policy.cluster_node_agent_policy,
-  ]
-  token_id = file("${path.module}/.bootstrap_token")
-  policy = "${consul_acl_policy.cluster_node_agent_policy.name}"
-}
-
 # resource "null_resource" "consul_cluster_tokenize" {
 #   depends_on = [
 #     null_resource.copy_bootstrap_token,
