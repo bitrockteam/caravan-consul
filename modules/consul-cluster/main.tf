@@ -118,19 +118,33 @@ resource "null_resource" "copy_bootstrap_token" {
   }
 }
 
-resource "null_resource" "consul_cluster_tokenize" {
+resource "consul_acl_policy" "cluster_node_agent_policy" {
   depends_on = [
     null_resource.copy_bootstrap_token,
     null_resource.consul_cluster_acl_bootstrap,
   ]
-  provisioner "remote-exec" {
-    script = "${path.module}/scripts/consul_tokenize.sh"
-    connection {
-      type        = "ssh"
-      user        = var.ssh_user
-      timeout     = var.ssh_timeout
-      private_key = var.ssh_private_key
-      host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]
-    }
-  }
+  name        = "cluster-node-agent-policy"
+  rules       = file("${path.module}/acls/cluster-node-agent.hcl")
 }
+
+resource "consul_acl_token" "cluster_node_agent_token" {
+  description = "node-agent-token"
+  policies = ["${consul_acl_policy.cluster_node_agent_policy.name}"]
+}
+
+# resource "null_resource" "consul_cluster_tokenize" {
+#   depends_on = [
+#     null_resource.copy_bootstrap_token,
+#     null_resource.consul_cluster_acl_bootstrap,
+#   ]
+#   provisioner "remote-exec" {
+#     script = "${path.module}/scripts/consul_tokenize.sh"
+#     connection {
+#       type        = "ssh"
+#       user        = var.ssh_user
+#       timeout     = var.ssh_timeout
+#       private_key = var.ssh_private_key
+#       host        = var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]
+#     }
+#   }
+# }
