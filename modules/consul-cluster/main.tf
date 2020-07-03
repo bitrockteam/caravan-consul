@@ -128,6 +128,9 @@ resource "consul_acl_policy" "cluster_node_agent_policy" {
 }
 
 resource "consul_acl_token" "cluster_node_agent_token" {
+  depends_on = [
+    consul_acl_policy.cluster_node_agent_policy,
+  ]
   description = "node-agent-token"
   policies = ["${consul_acl_policy.cluster_node_agent_policy.name}"]
 }
