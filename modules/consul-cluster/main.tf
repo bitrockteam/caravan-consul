@@ -108,16 +108,6 @@ resource "local_file" "ssh-key" {
   file_permission   = "0600"
 }
 
-resource "null_resource" "copy_bootstrap_token" {
-  depends_on = [
-    local_file.ssh-key,
-    null_resource.consul_cluster_acl_bootstrap
-  ]
-  provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${path.module}/.ssh-key ${var.ssh_user}@${var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]]} 'sudo cat /root/bootstrap_token' > .bootstrap_token"
-  }
-}
-
 # resource "null_resource" "consul_cluster_tokenize" {
 #   depends_on = [
 #     null_resource.copy_bootstrap_token,
