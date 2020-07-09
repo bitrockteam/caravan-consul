@@ -24,7 +24,6 @@ connection {
   host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
 }
 }
-}
 
 provisioner "file" {
   content     = "echo VAULT_ADDR=${var.vault_address} VAULT_TOKEN=`cat /root/root_token`\n"
