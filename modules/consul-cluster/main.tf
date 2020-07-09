@@ -9,7 +9,7 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
     destination = "/tmp/consul.hcl"
     content = <<-EOT
     ${templatefile(
-    "${path.module}/consul-cluster.hcl.tpl",
+    "${path.module}/consul-server.hcl.tpl",
     {
       cluster_nodes = var.cluster_nodes
       node_id       = each.key
