@@ -25,6 +25,26 @@ connection {
 }
 }
 
+  provisioner "file" {
+    destination = "/tmp/consul-client.hcl"
+    content = <<-EOT
+    ${templatefile(
+    "${path.module}/consul-client.hcl.tpl",
+    {
+      cluster_nodes = var.cluster_nodes
+      node_id       = each.key
+    }
+)}
+    EOT
+connection {
+  type        = "ssh"
+  user        = var.ssh_user
+  private_key = var.ssh_private_key
+  timeout     = var.ssh_timeout
+  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+}
+}
+
 provisioner "file" {
   content     = "echo VAULT_ADDR=${var.vault_address} VAULT_TOKEN=`cat /root/root_token`\n"
   destination = "vault.vars"
@@ -39,7 +59,7 @@ provisioner "file" {
 }
 
 provisioner "remote-exec" {
-  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl"]
+  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul*.hcl /etc/consul.d/consul.hcl"]
   connection {
     type        = "ssh"
     user        = var.ssh_user

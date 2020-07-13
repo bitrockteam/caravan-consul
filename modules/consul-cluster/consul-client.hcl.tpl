@@ -3,10 +3,7 @@ data_dir = "/var/lib/consul"
 log_level = "INFO"
 node_name = "${node_id}"
 retry_join = [
-   %{ for n in setsubtract(keys("${cluster_nodes}"), [node_id]) ~}
-   "${cluster_nodes[n]}:8301",
-   %{ endfor ~}
-   %{ for n in setsubtract(keys("${cluster_nodes}"), [node_id]) ~}
+   %{ for n in keys("${cluster_nodes}") ~}
    "${cluster_nodes[n]}:8301",
    %{ endfor ~}
 ]
@@ -22,7 +19,14 @@ ui = true
 client_addr = "0.0.0.0"
 connect {
    enabled = true
+   ca_provider = "vault"
+   ca_config {
+        address = "http://localhost:8200"
+        token = "..."
+        root_pki_path = "pki"
+        intermediate_pki_path = "pki-connect"
+    }
 }
-verify_incoming = true
-verify_outgoing = true
-verify_server_hostname = true
+#verify_incoming = true
+#verify_outgoing = true
+#verify_server_hostname = true
