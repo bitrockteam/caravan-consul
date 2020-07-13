@@ -24,7 +24,7 @@ connect {
    #ca_provider = "vault"
    #ca_config {
    #     address = "http://localhost:8200"
-   #     token = "/etc/consul.d/vault_token"
+   #     token = ""
    #     root_pki_path = "pki"
    #     intermediate_pki_path = "pki-connect"
    # }
