@@ -22,11 +22,19 @@ ui = true
 client_addr = "0.0.0.0"
 connect {
    enabled = true
-   # ca_provider = "vault"
-   # ca_config {
-   #      address = "http://localhost:8200"
-   #      token = "/etc/consul.d/vault_token"
-   #      root_pki_path = "pki"
-   #      intermediate_pki_path = "pki-connect"
-   # }
+   ca_provider = "vault"
+   ca_config {
+        address = "http://localhost:8200"
+        token = "/etc/consul.d/vault_token"
+        root_pki_path = "pki"
+        intermediate_pki_path = "pki_int"
+   }
 }
+# {{ with secret "pki_int/issue/consul" "common_name=consul" "ttl=24h" }}
+# cert_file = "{{ .Data.certificate }}"
+# key_file = "{{ .Data.issuing_ca }}"
+# ca_file = "{{ .Data.private_key }}"
+# {{ end }}
+verify_outgoing = true
+verify_incoming = true
+#verify_server_hostname = true
