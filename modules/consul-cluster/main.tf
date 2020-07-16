@@ -6,10 +6,10 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
   for_each = var.cluster_nodes
 
   provisioner "file" {
-    destination = "/tmp/consul.hcl.tpl"
+    destination = "/tmp/consul.hcl.tmpl"
     content = <<-EOT
     ${templatefile(
-    "${path.module}/consul-server.hcl.tpl",
+    "${path.module}/consul-server.hcl.tmpl",
     {
       cluster_nodes = var.cluster_nodes
       node_id       = each.key
@@ -58,7 +58,7 @@ provisioner "file" {
 }
 
 provisioner "remote-exec" {
-  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl && sudo mv /tmp/consul.hcl.tpl /etc/consul.d/consul.hcl.tpl"]
+  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl && sudo mv /tmp/consul.hcl.tmpl /etc/consul.d/consul.hcl.tmpl"]
   connection {
     type        = "ssh"
     user        = var.ssh_user
