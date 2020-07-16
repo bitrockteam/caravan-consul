@@ -23,6 +23,7 @@ connection {
   timeout     = var.ssh_timeout
   host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
 }
+  }
   provisioner "file" {
     destination = "/tmp/consul.hcl"
     content = <<-EOT
