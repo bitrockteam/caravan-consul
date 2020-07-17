@@ -7,61 +7,43 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 
   provisioner "file" {
     destination = "/tmp/cert.tmpl"
-    content = <<-EOT
-    ${templatefile(
-    "${path.module}/cert.tmpl",
-    {
-      cluster_nodes = var.cluster_nodes
-      node_id       = each.key
+    content = file("${path.module}/cert.tmpl")
+
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = var.ssh_private_key
+      timeout     = var.ssh_timeout
+      host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
     }
-)}
-    EOT
-connection {
-  type        = "ssh"
-  user        = var.ssh_user
-  private_key = var.ssh_private_key
-  timeout     = var.ssh_timeout
-  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-}
   }
+
   provisioner "file" {
     destination = "/tmp/keyfile.tmpl"
-    content = <<-EOT
-    ${templatefile(
-    "${path.module}/keyfile.tmpl",
-    {
-      cluster_nodes = var.cluster_nodes
-      node_id       = each.key
+    content = file("${path.module}/keyfile.tmpl")
+
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = var.ssh_private_key
+      timeout     = var.ssh_timeout
+      host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
     }
-)}
-    EOT
-connection {
-  type        = "ssh"
-  user        = var.ssh_user
-  private_key = var.ssh_private_key
-  timeout     = var.ssh_timeout
-  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-}
   }
+
   provisioner "file" {
     destination = "/tmp/ca.tmpl"
-    content = <<-EOT
-    ${templatefile(
-    "${path.module}/ca.tmpl",
-    {
-      cluster_nodes = var.cluster_nodes
-      node_id       = each.key
+    content = file("${path.module}/ca.tmpl")
+
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = var.ssh_private_key
+      timeout     = var.ssh_timeout
+      host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
     }
-)}
-    EOT
-connection {
-  type        = "ssh"
-  user        = var.ssh_user
-  private_key = var.ssh_private_key
-  timeout     = var.ssh_timeout
-  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-}
   }
+  
   provisioner "file" {
     destination = "/tmp/consul.hcl.tmpl"
     content = <<-EOT
