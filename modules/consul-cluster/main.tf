@@ -6,6 +6,63 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
   for_each = var.cluster_nodes
 
   provisioner "file" {
+    destination = "/tmp/cert.tmpl"
+    content = <<-EOT
+    ${templatefile(
+    "${path.module}/cert.tmpl",
+    {
+      cluster_nodes = var.cluster_nodes
+      node_id       = each.key
+    }
+)}
+    EOT
+connection {
+  type        = "ssh"
+  user        = var.ssh_user
+  private_key = var.ssh_private_key
+  timeout     = var.ssh_timeout
+  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+}
+  }
+  provisioner "file" {
+    destination = "/tmp/keyfile.tmpl"
+    content = <<-EOT
+    ${templatefile(
+    "${path.module}/keyfile.tmpl",
+    {
+      cluster_nodes = var.cluster_nodes
+      node_id       = each.key
+    }
+)}
+    EOT
+connection {
+  type        = "ssh"
+  user        = var.ssh_user
+  private_key = var.ssh_private_key
+  timeout     = var.ssh_timeout
+  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+}
+  }
+  provisioner "file" {
+    destination = "/tmp/ca.tmpl"
+    content = <<-EOT
+    ${templatefile(
+    "${path.module}/ca.tmpl",
+    {
+      cluster_nodes = var.cluster_nodes
+      node_id       = each.key
+    }
+)}
+    EOT
+connection {
+  type        = "ssh"
+  user        = var.ssh_user
+  private_key = var.ssh_private_key
+  timeout     = var.ssh_timeout
+  host        = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+}
+  }
+  provisioner "file" {
     destination = "/tmp/consul.hcl.tmpl"
     content = <<-EOT
     ${templatefile(
@@ -58,7 +115,7 @@ provisioner "file" {
 }
 
 provisioner "remote-exec" {
-  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl && sudo mv /tmp/consul.hcl.tmpl /etc/consul.d/consul.hcl.tmpl"]
+  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl && sudo mv /tmp/consul.hcl.tmpl /etc/consul.d/consul.hcl.tmpl && sudo mv /tmp/ca.tmpl /etc/consul.d/ca.tmpl && sudo mv /tmp/cert.tmpl /etc/consul.d/cert.tmpl && sudo mv /tmp/keyfile.tmpl /etc/consul.d/keyfile.tmpl"]
   connection {
     type        = "ssh"
     user        = var.ssh_user
