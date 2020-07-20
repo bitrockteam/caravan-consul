@@ -2,10 +2,6 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
   triggers = {
     ids = join("-", var.cluster_nodes_ids)
   }
-  
-  depends_on = [
-    module.vault_cluster_agents
-  ]
 
   for_each = var.cluster_nodes
 
