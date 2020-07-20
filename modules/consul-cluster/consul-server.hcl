@@ -21,4 +21,17 @@ ui = true
 client_addr = "0.0.0.0"
 connect {
    enabled = true
+   ca_provider = "vault"
+   ca_config {
+        address = "http://localhost:8200"
+        token = "/etc/consul.d/vault_token"
+        root_pki_path = "pki"
+        intermediate_pki_path = "pki_int"
+   }
 }
+cert_file = "/etc/consul.d/cert"
+key_file = "/etc/consul.d/keyfile"
+ca_file = "/etc/consul.d/ca"
+verify_outgoing = true
+verify_incoming = true
+#verify_server_hostname = true
