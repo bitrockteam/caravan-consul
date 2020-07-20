@@ -4,10 +4,7 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
   }
   
   depends_on = [
-    null_resource.vault_cluster_node_1_init,
-    null_resource.vault_cluster_node_not_1_init,
-    null_resource.vault_gcp_agent_config,
-    null_resource.vault_certificates_sync
+    module.vault_cluster_agents
   ]
 
   for_each = var.cluster_nodes
