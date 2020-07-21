@@ -1,1 +1,1 @@
-{{ with secret "pki_int/issue/consul" "common_name=server.hcpoc.consul" "ttl=24h" }}{{ .Data.issuing_ca }}{{ end }}
+{{ with secret "pki_int/issue/consul" "common_name=server.service.consul" "ttl=24h" }}{{ .Data.issuing_ca }}{{ end }}
