@@ -1,6 +1,6 @@
 datacenter = "hcpoc"
 data_dir = "/var/lib/consul"
-log_level = "INFO"
+log_level = "DEBUG"
 node_name = "${node_id}"
 bootstrap_expect = 3
 retry_join = [
