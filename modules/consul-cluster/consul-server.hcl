@@ -2,6 +2,7 @@ datacenter = "hcpoc"
 data_dir = "/var/lib/consul"
 log_level = "DEBUG"
 node_name = "${node_id}"
+bind_addr = "{{ GetInterfaceIP \"eth0\" }}"
 bootstrap_expect = 3
 retry_join = [
    %{ for n in setsubtract(keys("${cluster_nodes}"), [node_id]) ~}
