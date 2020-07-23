@@ -9,6 +9,11 @@ retry_join = [
    %{ endfor ~}
 ]
 server = true
+ports {
+  grpc  = 8502
+  https = 8501
+  http  = 8500
+}
 telemetry = {
    statsite_address = "127.0.0.1:2180"
 }
