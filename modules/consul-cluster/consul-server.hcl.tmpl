@@ -14,8 +14,9 @@ ports {
   http  = 8500
 }
 server = true
-telemetry = {
-   statsite_address = "127.0.0.1:2180"
+telemetry {
+   prometheus_retention_time = "30s"
+   disable_hostname = true
 }
 acl {
    enabled = true
