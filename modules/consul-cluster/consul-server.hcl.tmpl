@@ -31,7 +31,7 @@ connect {
    ca_config {
         address = "http://localhost:8200"
         token = "{{ file "/etc/consul.d/vault_token" }}"
-        root_pki_path = "connect_pki"
+        root_pki_path = "tls_pki"
         intermediate_pki_path = "connect_pki_int"
    }
 }
