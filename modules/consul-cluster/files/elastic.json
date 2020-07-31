@@ -1,0 +1,35 @@
+{
+    "Node": "monitoringnode",
+    "Address": "<to_tmpl>",
+    "NodeMeta": {
+      "external-node": "true",
+      "external-probe": "true"
+    },
+    "Service": {
+      "ID": "elastic1",
+      "Service": "elastic",
+      "Port": 9200
+    },
+    "Checks": [
+      {
+        "Name": "http-check",
+        "Definition": {
+          "id" : "elastic-api",
+          "http": "http://<to_tmpl>:9200/_cluster/health",
+          "status" : "passing",
+          "interval": "5s",
+          "timeout": "5s"
+        }
+      },
+      {
+        "Name": "tcp-check",
+        "Definition": {
+          "id" : "elastic-api",
+          "tcp": "<to_tmpl>:9200",
+          "status" : "passing",
+          "interval": "5s",
+          "timeout": "5s"
+        }
+      }
+    ]
+  }
