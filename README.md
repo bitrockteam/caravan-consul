@@ -18,7 +18,7 @@ Run ingress:
 
 it saves logs in local ingress.log
 
-#### consul-egm
+#### consul-esm (external service monitoring)
 
 On clustnode02
 
