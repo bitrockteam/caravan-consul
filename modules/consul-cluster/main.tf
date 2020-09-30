@@ -7,7 +7,14 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 
   provisioner "file" {
     destination = "/tmp/cert.tmpl"
-    content     = file("${path.module}/cert.tmpl")
+    content     = <<-EOT
+    ${templatefile(
+    "${path.module}/cert.tmpl",
+    {
+      dc_name = var.dc_name
+    }
+)}
+    EOT
 
     connection {
       type                = "ssh"
@@ -24,7 +31,14 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 
   provisioner "file" {
     destination = "/tmp/keyfile.tmpl"
-    content     = file("${path.module}/keyfile.tmpl")
+    content     = <<-EOT
+    ${templatefile(
+    "${path.module}/keyfile.tmpl",
+    {
+      dc_name = var.dc_name
+    }
+)}
+    EOT
 
     connection {
       type                = "ssh"
