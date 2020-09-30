@@ -5,6 +5,9 @@ variable "cluster_nodes_public_ips" {
   type    = map(any)
   default = null
 }
+variable "dc_name" {
+  type    = string
+}
 variable "consul_home" {
   type    = string
   default = "/var/lib/consul"

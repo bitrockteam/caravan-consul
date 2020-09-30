@@ -63,7 +63,8 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
     "${path.module}/consul-server.hcl.tmpl",
     {
       cluster_nodes = var.cluster_nodes
-      node_id       = each.key
+      node_id       = each.key,
+      dc_name       = var.dc_name
     }
 )}
     EOT
