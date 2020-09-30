@@ -87,7 +87,8 @@ provisioner "file" {
   "${path.module}/consul-server.hcl",
   {
     cluster_nodes = var.cluster_nodes
-    node_id       = each.key
+    node_id       = each.key,
+    dc_name       = var.dc_name
   }
 )}
     EOT
