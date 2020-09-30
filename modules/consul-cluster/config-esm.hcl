@@ -54,7 +54,7 @@ http_addr = "localhost:8500"
 token = "<to_tmpl>"
 
 // The Consul datacenter to use.
-datacenter = "hcpoc"
+datacenter = "gcp-dc"
 
 // The CA file to use for talking to Consul over TLS. Can also be provided
 // though the CONSUL_CACERT environment variable.

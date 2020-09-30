@@ -1,4 +1,4 @@
-datacenter = "hcpoc"
+datacenter = "gcp-dc"
 data_dir = "/var/lib/consul"
 log_level = "DEBUG"
 node_name = "${node_id}"
