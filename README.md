@@ -1,4 +1,4 @@
-# hcpoc-base-consul-baseline
+# hashicorp-consul-baseline
 
 #### ingress
 
