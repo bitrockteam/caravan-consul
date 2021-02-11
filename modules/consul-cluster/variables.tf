@@ -6,7 +6,7 @@ variable "cluster_nodes_public_ips" {
   default = null
 }
 variable "dc_name" {
-  type    = string
+  type = string
 }
 variable "consul_home" {
   type    = string

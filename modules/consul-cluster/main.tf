@@ -7,7 +7,7 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 
   provisioner "file" {
     destination = "/tmp/cert.tmpl"
-    content     = <<-EOT
+    content = <<-EOT
     ${templatefile(
     "${path.module}/cert.tmpl",
     {
@@ -16,70 +16,70 @@ resource "null_resource" "consul_cluster_node_deploy_config" {
 )}
     EOT
 
-    connection {
-      type                = "ssh"
-      user                = var.ssh_user
-      private_key         = var.ssh_private_key
-      timeout             = var.ssh_timeout
-      host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-      bastion_host        = var.ssh_bastion_host
-      bastion_port        = var.ssh_bastion_port
-      bastion_private_key = var.ssh_bastion_private_key
-      bastion_user        = var.ssh_bastion_user
-    }
-  }
+connection {
+  type                = "ssh"
+  user                = var.ssh_user
+  private_key         = var.ssh_private_key
+  timeout             = var.ssh_timeout
+  host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+  bastion_host        = var.ssh_bastion_host
+  bastion_port        = var.ssh_bastion_port
+  bastion_private_key = var.ssh_bastion_private_key
+  bastion_user        = var.ssh_bastion_user
+}
+}
 
-  provisioner "file" {
-    destination = "/tmp/keyfile.tmpl"
-    content     = <<-EOT
+provisioner "file" {
+  destination = "/tmp/keyfile.tmpl"
+  content = <<-EOT
     ${templatefile(
-    "${path.module}/keyfile.tmpl",
-    {
-      dc_name = var.dc_name
-    }
+  "${path.module}/keyfile.tmpl",
+  {
+    dc_name = var.dc_name
+  }
 )}
     EOT
 
-    connection {
-      type                = "ssh"
-      user                = var.ssh_user
-      private_key         = var.ssh_private_key
-      timeout             = var.ssh_timeout
-      host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-      bastion_host        = var.ssh_bastion_host
-      bastion_port        = var.ssh_bastion_port
-      bastion_private_key = var.ssh_bastion_private_key
-      bastion_user        = var.ssh_bastion_user
-    }
+connection {
+  type                = "ssh"
+  user                = var.ssh_user
+  private_key         = var.ssh_private_key
+  timeout             = var.ssh_timeout
+  host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+  bastion_host        = var.ssh_bastion_host
+  bastion_port        = var.ssh_bastion_port
+  bastion_private_key = var.ssh_bastion_private_key
+  bastion_user        = var.ssh_bastion_user
+}
+}
+
+provisioner "file" {
+  destination = "/tmp/ca.tmpl"
+  content     = file("${path.module}/ca.tmpl")
+
+  connection {
+    type                = "ssh"
+    user                = var.ssh_user
+    private_key         = var.ssh_private_key
+    timeout             = var.ssh_timeout
+    host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+    bastion_host        = var.ssh_bastion_host
+    bastion_port        = var.ssh_bastion_port
+    bastion_private_key = var.ssh_bastion_private_key
+    bastion_user        = var.ssh_bastion_user
   }
+}
 
-  provisioner "file" {
-    destination = "/tmp/ca.tmpl"
-    content     = file("${path.module}/ca.tmpl")
-
-    connection {
-      type                = "ssh"
-      user                = var.ssh_user
-      private_key         = var.ssh_private_key
-      timeout             = var.ssh_timeout
-      host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
-      bastion_host        = var.ssh_bastion_host
-      bastion_port        = var.ssh_bastion_port
-      bastion_private_key = var.ssh_bastion_private_key
-      bastion_user        = var.ssh_bastion_user
-    }
-  }
-
-  provisioner "file" {
-    destination = "/tmp/consul.hcl.tmpl"
-    content = <<-EOT
+provisioner "file" {
+  destination = "/tmp/consul.hcl.tmpl"
+  content = <<-EOT
     ${templatefile(
-    "${path.module}/consul-server.hcl.tmpl",
-    {
-      cluster_nodes = var.cluster_nodes
-      node_id       = each.key
-      dc_name       = var.dc_name
-    }
+  "${path.module}/consul-server.hcl.tmpl",
+  {
+    cluster_nodes = var.cluster_nodes
+    node_id       = each.key
+    dc_name       = var.dc_name
+  }
 )}
     EOT
 connection {
