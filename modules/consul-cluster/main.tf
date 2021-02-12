@@ -189,19 +189,19 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
       host  = var.cluster_nodes[keys(var.cluster_nodes)[0]]
 })}
     EOT
-    connection {
-      type                = "ssh"
-      user                = var.ssh_user
-      timeout             = var.ssh_timeout
-      private_key         = var.ssh_private_key
-      host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
-      bastion_host        = var.ssh_bastion_host
-      bastion_port        = var.ssh_bastion_port
-      bastion_private_key = var.ssh_bastion_private_key
-      bastion_user        = var.ssh_bastion_user
-    }
-  }
-  provisioner "remote-exec" {
+connection {
+  type                = "ssh"
+  user                = var.ssh_user
+  timeout             = var.ssh_timeout
+  private_key         = var.ssh_private_key
+  host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[keys(var.cluster_nodes)[0]] : var.cluster_nodes[keys(var.cluster_nodes)[0]]
+  bastion_host        = var.ssh_bastion_host
+  bastion_port        = var.ssh_bastion_port
+  bastion_private_key = var.ssh_bastion_private_key
+  bastion_user        = var.ssh_bastion_user
+}
+}
+provisioner "remote-exec" {
   inline = ["chmod +x /tmp/consul_acl_bootstrap.sh && sh /tmp/consul_acl_bootstrap.sh"]
   connection {
     type                = "ssh"
