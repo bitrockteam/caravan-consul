@@ -1,13 +1,36 @@
 #!/bin/bash
-set -e
+set -exo pipefail
+
+NODES=(
+  %{ for node in nodes ~}
+  ${node}
+  %{ endfor ~}
+)
+
+HOST=${host}
+
+echo "Checking consul nodes.."
+for n in $${NODES[@]}; do
+  if [[ "$n" != $HOST ]];
+  then
+    while ! curl --output /dev/null --silent --fail  http://$n:8500; do 
+      sleep 5s
+    done
+    # /usr/local/bin/consul server join $n
+    echo "Node $n is alive."
+  fi
+done
 
 echo "Waiting for Consul up..."
-consul_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "127.0.0.1:8500/v1/status/leader") || consul_up=""
-while [ $(curl --silent --output /dev/null --write-out "%{http_code}" "127.0.0.1:8500/v1/status/leader") != "200" ]; do
+consul_up=$(curl --silent --output /dev/null --write-out "%%{http_code}" "127.0.0.1:8500/v1/status/leader") || consul_up=""
+while [ $(curl --silent --output /dev/null --write-out "%%{http_code}" "127.0.0.1:8500/v1/status/leader") != "200" ]; do
   echo "Waiting for Consul to get a leader..."
   sleep 5
-  consul_up=$(curl --silent --output /dev/null --write-out "%{http_code}" "127.0.0.1:8500/v1/status/leader") || consul_up=""
+  consul_up=$(curl --silent --output /dev/null --write-out "%%{http_code}" "127.0.0.1:8500/v1/status/leader") || consul_up=""
 done
+
+echo "Raft peers:"
+curl -s 127.0.0.1:8500/v1/status/peers
 
 echo "Bootstrapping ACLs..."
 consul acl bootstrap | \
