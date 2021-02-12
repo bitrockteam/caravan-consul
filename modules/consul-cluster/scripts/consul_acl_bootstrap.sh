@@ -16,7 +16,6 @@ for n in $${NODES[@]}; do
     while ! curl --output /dev/null --silent --fail  http://$n:8500; do 
       sleep 5s
     done
-    # /usr/local/bin/consul server join $n
     echo "Node $n is alive."
   fi
 done
