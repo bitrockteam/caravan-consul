@@ -6,7 +6,8 @@ variable "cluster_nodes_public_ips" {
   default = null
 }
 variable "dc_name" {
-  type = string
+  description = "Name of the datacenter of the consul cluster"
+  type        = string
 }
 variable "consul_home" {
   type    = string
