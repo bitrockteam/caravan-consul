@@ -45,14 +45,17 @@ jobs:
         id: validate
         run: for D in modules/*; do [ -d "${D}" ] && cd ${D}; echo "${D}"; terraform validate; done
 
+      - name: Generate TF docs
+        uses: Dirrk/terraform-docs@v1.0.8
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          tf_docs_find_dir: modules/
+          tf_docs_git_push: 'true'
+
       - name: Bump version and push tag
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         id: tag_version
         uses: mathieudutour/github-tag-action@v5.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Generate TF docs
-        uses: Dirrk/terraform-docs@v1.0.8
-        with:
-          tf_docs_find_dir: modules/
+
