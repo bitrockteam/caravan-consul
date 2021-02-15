@@ -27,11 +27,11 @@ No Modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| cluster\_nodes | cluste node | `map(any)` | n/a | yes |
+| cluster\_nodes | n/a | `map(any)` | n/a | yes |
 | cluster\_nodes\_ids | n/a | `list(string)` | n/a | yes |
 | cluster\_nodes\_public\_ips | n/a | `map(any)` | `null` | no |
 | consul\_home | n/a | `string` | `"/var/lib/consul"` | no |
-| dc\_name | n/a | `string` | n/a | yes |
+| dc\_name | Name of the datacenter of the consul cluster | `string` | n/a | yes |
 | ssh\_bastion\_host | n/a | `string` | `null` | no |
 | ssh\_bastion\_port | n/a | `string` | `"22"` | no |
 | ssh\_bastion\_private\_key | n/a | `string` | `null` | no |
