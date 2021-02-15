@@ -1,4 +1,4 @@
-# Usage
+# Consul Cluster module
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -27,10 +27,10 @@ No Modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| cluster\_nodes | n/a | `map(any)` | n/a | yes |
-| cluster\_nodes\_ids | n/a | `list(string)` | n/a | yes |
-| cluster\_nodes\_public\_ips | n/a | `map(any)` | `null` | no |
-| consul\_home | n/a | `string` | `"/var/lib/consul"` | no |
+| cluster\_nodes | A map in form of 'node-name' => 'node's private IP' of the nodes to provision the cluster on | `map(any)` | n/a | yes |
+| cluster\_nodes\_ids | list of strings which are IDs of the instance resources and are used to `trigger` the provisioning of `null` resources on instance recreation | `list(string)` | n/a | yes |
+| cluster\_nodes\_public\_ips | The public IPs of the node to SSH into them | `map(any)` | `null` | no |
+| consul\_home | The directory where the consul's data is kept on the nodes | `string` | `"/var/lib/consul"` | no |
 | dc\_name | Name of the datacenter of the consul cluster | `string` | n/a | yes |
 | ssh\_bastion\_host | n/a | `string` | `null` | no |
 | ssh\_bastion\_port | n/a | `string` | `"22"` | no |
