@@ -1,5 +1,5 @@
 variable "cluster_nodes" {
-  type = map(any)
+  type        = map(any)
 }
 variable "cluster_nodes_public_ips" {
   type    = map(any)
