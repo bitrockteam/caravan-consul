@@ -28,6 +28,15 @@ while [ $consul_up != "200" ]; do
   consul_up=$(curl --silent --output /dev/null --write-out "%%{http_code}" "127.0.0.1:8500/v1/status/leader") || consul_up=""
 done
 
+consul_acl=$(curl --silent "127.0.0.1:8500/v1/acl/login"  -d '{ "AuthMethod": "test", "BearerToken": "XXXX" }') || consul_acl=""
+expected_consul_acl="rpc error making call: ACL not found"
+while [[ "$consul_acl" != "$expected_consul_acl" ]]; do
+  echo "Check for Consul ACL..."
+  curl --silent "127.0.0.1:8500/v1/acl/login"  -d '{ "AuthMethod": "test", "BearerToken": "XXXX" }'
+  sleep 5
+  consul_acl=$(curl --silent "127.0.0.1:8500/v1/acl/login"  -d '{ "AuthMethod": "test", "BearerToken": "XXXX" }') || consul_acl=""
+done
+
 echo "Raft peers:"
 curl -s 127.0.0.1:8500/v1/status/peers
 
