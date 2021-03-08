@@ -54,3 +54,8 @@ variable "vault_token_file" {
   type    = string
   default = ".root_token"
 }
+variable "license" {
+  type        = string
+  default     = ""
+  description = "Consul license to use"
+}

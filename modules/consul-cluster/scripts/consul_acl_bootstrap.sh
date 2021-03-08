@@ -40,6 +40,11 @@ done
 echo "Raft peers:"
 curl -s 127.0.0.1:8500/v1/status/peers
 
+%{ if license != "" ~}
+echo "Adding Consul License..."
+consul license put "${license}"
+%{ endif ~}
+
 echo "Bootstrapping ACLs..."
 consul acl bootstrap | \
 awk '(/Secret/ || /Accessor/)'| sudo tee /root/tokens && \
