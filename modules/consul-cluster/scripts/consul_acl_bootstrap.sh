@@ -40,10 +40,11 @@ done
 echo "Raft peers:"
 curl -s 127.0.0.1:8500/v1/status/peers
 
-%{ if license != "" ~}
-echo "Adding Consul License..."
-consul license put "${license}"
-%{ endif ~}
+if [[ -n $${LICENSE} ]]
+then
+  echo "Adding Consul License..."
+  consul license put $$LICENSE
+fi
 
 echo "Bootstrapping ACLs..."
 consul acl bootstrap | \
