@@ -185,9 +185,8 @@ resource "null_resource" "consul_cluster_acl_bootstrap" {
     content = <<-EOT
     ${templatefile("${path.module}/scripts/consul_acl_bootstrap.sh",
     {
-      nodes   = var.cluster_nodes
-      host    = var.cluster_nodes[keys(var.cluster_nodes)[0]]
-      license = var.license
+      nodes = var.cluster_nodes
+      host  = var.cluster_nodes[keys(var.cluster_nodes)[0]]
 })}
     EOT
 connection {
