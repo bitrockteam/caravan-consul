@@ -29,8 +29,8 @@ while [ $consul_up != "200" ]; do
 done
 
 consul_acl=$(curl --silent "127.0.0.1:8500/v1/acl/login"  -d '{ "AuthMethod": "test", "BearerToken": "XXXX" }') || consul_acl=""
-expected_consul_acl="ACL not found"
-while [[ "$consul_acl" != "$expected_consul_acl" ]]; do
+expected_consul_acl="[a-z :]*ACL not found"
+while [[ ! "$consul_acl" =~ $expected_consul_acl ]]; do
   echo "Check for Consul ACL..."
   curl --silent "127.0.0.1:8500/v1/acl/login"  -d '{ "AuthMethod": "test", "BearerToken": "XXXX" }'
   sleep 5
