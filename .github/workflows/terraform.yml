@@ -42,6 +42,8 @@ jobs:
         run: for D in modules/*; do [ -d "${D}" ] && cd ${D}; echo "${D}"; terraform init -backend=false; done
 
       - name: Terraform Validate
+        env:
+          NOMAD_ADDR: http://localhost:4646
         id: validate
         run: for D in modules/*; do [ -d "${D}" ] && cd ${D}; echo "${D}"; terraform validate; done
 
