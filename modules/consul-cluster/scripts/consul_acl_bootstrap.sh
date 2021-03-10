@@ -43,7 +43,7 @@ curl -s 127.0.0.1:8500/v1/status/peers
 if [[ -n $${LICENSE} ]]
 then
   echo "Adding Consul License..."
-  consul license put $$LICENSE
+  echo "$${LICENSE}" | consul license put -
 fi
 
 echo "Bootstrapping ACLs..."
