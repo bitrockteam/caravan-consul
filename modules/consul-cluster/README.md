@@ -32,6 +32,7 @@ No Modules.
 | cluster\_nodes\_public\_ips | The public IPs of the node to SSH into them | `map(any)` | `null` | no |
 | consul\_home | The directory where the consul's data is kept on the nodes | `string` | `"/var/lib/consul"` | no |
 | dc\_name | Name of the datacenter of the consul cluster | `string` | n/a | yes |
+| license | Consul license to use | `string` | `""` | no |
 | ssh\_bastion\_host | n/a | `string` | `null` | no |
 | ssh\_bastion\_port | n/a | `string` | `"22"` | no |
 | ssh\_bastion\_private\_key | n/a | `string` | `null` | no |
