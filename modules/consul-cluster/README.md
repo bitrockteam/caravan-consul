@@ -33,6 +33,7 @@ No Modules.
 | consul\_home | The directory where the consul's data is kept on the nodes | `string` | `"/var/lib/consul"` | no |
 | dc\_name | Name of the datacenter of the consul cluster | `string` | n/a | yes |
 | license | Consul license to use | `string` | `""` | no |
+| service\_dashboard\_url\_template | A service dashboard URL template which allows users to click directly through to the relevant service-specific dashboard | `string` | `"https://grafana.example.com/d/lDlaj-NGz/service-overview?orgId=1&var-service={{Service.Name}}&var-namespace={{Service.Namespace}}&var-dc={{Datacenter}}"` | no |
 | ssh\_bastion\_host | n/a | `string` | `null` | no |
 | ssh\_bastion\_port | n/a | `string` | `"22"` | no |
 | ssh\_bastion\_private\_key | n/a | `string` | `null` | no |

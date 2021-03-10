@@ -11,6 +11,11 @@ variable "dc_name" {
   description = "Name of the datacenter of the consul cluster"
   type        = string
 }
+variable "service_dashboard_url_template" {
+  description = "A service dashboard URL template which allows users to click directly through to the relevant service-specific dashboard"
+  type        = string
+  default     = "https://grafana.example.com/d/lDlaj-NGz/service-overview?orgId=1&var-service={{Service.Name}}&var-namespace={{Service.Namespace}}&var-dc={{Datacenter}}"
+}
 variable "consul_home" {
   type        = string
   description = "The directory where the consul's data is kept on the nodes"
