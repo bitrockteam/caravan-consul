@@ -14,7 +14,7 @@ variable "dc_name" {
 variable "service_dashboard_url_template" {
   description = "A service dashboard URL template which allows users to click directly through to the relevant service-specific dashboard"
   type        = string
-  default     = "https://grafana.example.com/d/lDlaj-NGz/service-overview?orgId=1&var-service={{Service.Name}}&var-namespace={{Service.Namespace}}&var-dc={{Datacenter}}"
+  default     = ""
 }
 variable "consul_home" {
   type        = string

@@ -31,9 +31,11 @@ ui_config {
   metrics_proxy {
     base_url = "http://prometheus.service.consul:9090"
   }
+  %{ if can(regex("^http", "${service_dashboard_url_template}")) ~}
   dashboard_url_templates {
       service = "${service_dashboard_url_template}"
   }
+  %{ endif ~}
 }
 client_addr = "0.0.0.0"
 connect {
