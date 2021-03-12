@@ -33,7 +33,7 @@ ui_config {
   }
   %{ if can(regex("^http", "${service_dashboard_url_template}")) ~}
   dashboard_url_templates {
-      service = "${service_dashboard_url_template}"
+      service = {{ `"${service_dashboard_url_template}"` }}
   }
   %{ endif ~}
 }
