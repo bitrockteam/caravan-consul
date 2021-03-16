@@ -44,6 +44,7 @@ jobs:
       - name: Terraform Validate
         env:
           NOMAD_ADDR: http://localhost:4646
+          ACME_SERVER_URL: http://localhost
         id: validate
         run: for D in modules/*; do [ -d "${D}" ] && cd ${D}; echo "${D}"; terraform validate; done
 
