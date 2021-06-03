@@ -137,8 +137,25 @@ provisioner "file" {
   }
 }
 
+provisioner "file" {
+  destination = "/tmp/consul_license.hclic"
+  content     = var.license
+
+  connection {
+    type                = "ssh"
+    user                = var.ssh_user
+    private_key         = var.ssh_private_key
+    timeout             = var.ssh_timeout
+    host                = var.cluster_nodes_public_ips != null ? var.cluster_nodes_public_ips[each.key] : each.value
+    bastion_host        = var.ssh_bastion_host
+    bastion_port        = var.ssh_bastion_port
+    bastion_private_key = var.ssh_bastion_private_key
+    bastion_user        = var.ssh_bastion_user
+  }
+}
+
 provisioner "remote-exec" {
-  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl && sudo mv /tmp/consul.hcl.tmpl /etc/consul.d/consul.hcl.tmpl && sudo mv /tmp/ca.tmpl /etc/consul.d/ca.tmpl && sudo mv /tmp/cert.tmpl /etc/consul.d/cert.tmpl && sudo mv /tmp/keyfile.tmpl /etc/consul.d/keyfile.tmpl"]
+  inline = ["sudo mv vault.vars /root/vault.vars; sudo mv /tmp/consul.hcl /etc/consul.d/consul.hcl && sudo mv /tmp/consul.hcl.tmpl /etc/consul.d/consul.hcl.tmpl && sudo mv /tmp/ca.tmpl /etc/consul.d/ca.tmpl && sudo mv /tmp/cert.tmpl /etc/consul.d/cert.tmpl && sudo mv /tmp/keyfile.tmpl /etc/consul.d/keyfile.tmpl && sudo mv /tmp/consul_license.hclic /etc/consul.d/license.hclic"]
   connection {
     type                = "ssh"
     user                = var.ssh_user
@@ -203,7 +220,7 @@ connection {
 }
 }
 provisioner "remote-exec" {
-  inline = ["chmod +x /tmp/consul_acl_bootstrap.sh && export LICENSE=\"${var.license}\" && sh /tmp/consul_acl_bootstrap.sh"]
+  inline = ["chmod +x /tmp/consul_acl_bootstrap.sh && sh /tmp/consul_acl_bootstrap.sh"]
   connection {
     type                = "ssh"
     user                = var.ssh_user
