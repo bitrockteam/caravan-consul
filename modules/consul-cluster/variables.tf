@@ -64,3 +64,8 @@ variable "license" {
   default     = ""
   description = "Consul license to use"
 }
+variable "encryption_key" {
+  type        = string
+  default     = ""
+  description = "Consul encryption key"
+}
