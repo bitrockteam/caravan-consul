@@ -18,6 +18,7 @@ telemetry = {
    prometheus_retention_time = "30s"
    disable_hostname = true
 }
+encrypt = "${encryption_key}"
 acl {
    enabled = true
    default_policy = "deny"

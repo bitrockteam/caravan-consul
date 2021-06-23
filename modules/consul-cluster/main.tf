@@ -80,6 +80,7 @@ provisioner "file" {
     node_id                        = each.key
     dc_name                        = var.dc_name
     service_dashboard_url_template = var.service_dashboard_url_template
+    encryption_key                 = chomp(var.encryption_key)
   }
 )}
     EOT
@@ -101,9 +102,10 @@ provisioner "file" {
     ${templatefile(
   "${path.module}/consul-server.hcl",
   {
-    cluster_nodes = var.cluster_nodes
-    node_id       = each.key
-    dc_name       = var.dc_name
+    cluster_nodes  = var.cluster_nodes
+    node_id        = each.key
+    dc_name        = var.dc_name
+    encryption_key = chomp(var.encryption_key)
   }
 )}
     EOT
