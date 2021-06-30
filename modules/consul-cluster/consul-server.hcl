@@ -26,3 +26,4 @@ acl {
  }
 ui = true
 client_addr = "0.0.0.0"
+license_path = "/etc/consul.d/license.hclic"

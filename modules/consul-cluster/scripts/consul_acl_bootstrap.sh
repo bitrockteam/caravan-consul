@@ -49,10 +49,4 @@ export `sudo sh /root/vault.vars` && \
   vault kv put secret/consul/bootstrap_token secretid="`sudo cat /root/tokens | awk '/Secret/{print $2}'`" accessorid="`sudo cat /root/tokens | awk '/Access/{print $2}'`"
 }
 
-if [[ -n $${LICENSE} ]]
-then
-  echo "Adding Consul License..."
-  echo "$${LICENSE}" | consul license put -token="$(sudo cat /root/tokens | awk '/Secret/{print $2}')" -
-fi
-
 sudo rm -f /root/tokens
