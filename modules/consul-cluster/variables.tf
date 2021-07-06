@@ -22,7 +22,8 @@ variable "consul_home" {
   default     = "/var/lib/consul"
 }
 variable "ssh_private_key" {
-  type = string
+  type      = string
+  sensitive = true
 }
 variable "ssh_user" {
   type    = string
@@ -54,10 +55,6 @@ variable "cluster_nodes_ids" {
 }
 variable "vault_address" {
   type = string
-}
-variable "vault_token_file" {
-  type    = string
-  default = ".root_token"
 }
 variable "license" {
   type        = string

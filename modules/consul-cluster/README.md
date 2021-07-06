@@ -36,6 +36,7 @@ No modules.
 | <a name="input_vault_address"></a> [vault\_address](#input\_vault\_address) | n/a | `string` | n/a | yes |
 | <a name="input_cluster_nodes_public_ips"></a> [cluster\_nodes\_public\_ips](#input\_cluster\_nodes\_public\_ips) | The public IPs of the node to SSH into them | `map(any)` | `null` | no |
 | <a name="input_consul_home"></a> [consul\_home](#input\_consul\_home) | The directory where the consul's data is kept on the nodes | `string` | `"/var/lib/consul"` | no |
+| <a name="input_encryption_key"></a> [encryption\_key](#input\_encryption\_key) | Consul encryption key | `string` | `""` | no |
 | <a name="input_license"></a> [license](#input\_license) | Consul license to use | `string` | `""` | no |
 | <a name="input_service_dashboard_url_template"></a> [service\_dashboard\_url\_template](#input\_service\_dashboard\_url\_template) | A service dashboard URL template which allows users to click directly through to the relevant service-specific dashboard | `string` | `""` | no |
 | <a name="input_ssh_bastion_host"></a> [ssh\_bastion\_host](#input\_ssh\_bastion\_host) | n/a | `string` | `null` | no |
@@ -44,7 +45,6 @@ No modules.
 | <a name="input_ssh_bastion_user"></a> [ssh\_bastion\_user](#input\_ssh\_bastion\_user) | n/a | `string` | `null` | no |
 | <a name="input_ssh_timeout"></a> [ssh\_timeout](#input\_ssh\_timeout) | n/a | `string` | `"15s"` | no |
 | <a name="input_ssh_user"></a> [ssh\_user](#input\_ssh\_user) | n/a | `string` | `"centos"` | no |
-| <a name="input_vault_token_file"></a> [vault\_token\_file](#input\_vault\_token\_file) | n/a | `string` | `".root_token"` | no |
 
 ## Outputs
 
