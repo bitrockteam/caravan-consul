@@ -1,4 +1,4 @@
-# Consul Cluster module
+# Caravan Consul Cluster
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
