@@ -222,7 +222,7 @@ connection {
 }
 }
 provisioner "remote-exec" {
-  inline = ["chmod +x /tmp/consul_acl_bootstrap.sh && bash /tmp/consul_acl_bootstrap.sh"]
+  inline = ["chmod +x /tmp/consul_acl_bootstrap.sh && /tmp/consul_acl_bootstrap.sh"]
   connection {
     type                = "ssh"
     user                = var.ssh_user
